@@ -1,6 +1,8 @@
 <template>
-  
-   
+    <div class="q-pa-md q-gutter-sm">
+      <q-btn flat rounded color="primary" label="Add Project" />
+    </div>
+
 <q-table>
   <thead>
     <tr>
@@ -13,7 +15,7 @@
       <th class="text-right">DATE STARTED</th>
       <th class="text-right">TARGET DATE ACCOMPLISHED</th>
       <th class="text-right">ACTIONS</th>
-      
+
     </tr>
   </thead>
   <tbody>
@@ -27,7 +29,7 @@
       <td class="text-right">3.9</td>
       <td class="text-right">327</td>
       <td class="text-right">
-        <q-btn color="primary" icon="edit" />
+        <q-btn color="primary" icon="edit" /> &nbsp;
         <q-btn color="red" icon="delete"  />
       </td>
     </tr>
@@ -87,7 +89,7 @@
         <q-btn color="red" icon="delete"  />
       </td>
     </tr>
-    
+
   </tbody>
 </q-table>
 
@@ -99,5 +101,5 @@ import { defineComponent } from 'vue'
 export default defineComponent({
 
 })
-  
+
 </script>
