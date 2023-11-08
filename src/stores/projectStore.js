@@ -28,7 +28,7 @@ export const useProjectInfoStore = defineStore('ProjectInfoStore', {
       }
     },
 
-    async newProjects(payload){
+    async newProject(payload){
       try {
           const result = await axios.post('http://10.0.1.23:5000/api/eprojects/new', payload);
           this.Project.push(result.data);
