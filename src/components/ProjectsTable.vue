@@ -23,6 +23,7 @@
           'ProjectIncharge',
           'TargetAccomplishment',
           'Location',
+          'Actions',
         ]"
       >
         <template #body="props">
@@ -31,18 +32,18 @@
               {{ props.row.ProjectName }}
             </q-td>
             <q-td key="ReferenceNo" style="font-size: 11px">
-              {{ props.row.RequestedBy }}
+              {{ props.row.ReferenceNo }}
             </q-td>
             <q-td key="TotalProjectCost" style="font-size: 11px" align="center">
-              {{ props.row.ContactNo }}
+              {{ formatMoney(props.row.TotalProjectCost) }}
             </q-td>
             <q-td key="ProjectIncharge" style="font-size: 11px">
               {{ props.row.ProjectIncharge }}
             </q-td>
             <q-td key="TargetAccomplishment" style="font-size: 11px">
-              {{ props.row.TargetAccomplishment }}
+              {{ formatDate(props.row.TargetAccomplishment) }}
             </q-td>
-            <q-td key="Location" style="font-size: 11px">
+            <q-td key="Barangay" style="font-size: 11px">
               {{ props.row.Location.Barangay }}
             </q-td>
 
@@ -52,14 +53,14 @@
                 icon="edit"
                 color="primary"
                 style="font-size: 1em"
-                @click="GetRequest(props.row._id)"
-              />
+                @click="ViewProject(props.row._id)"
+              >
+              </q-btn>
               <q-btn
                 flat
                 icon="delete"
                 color="negative"
                 style="font-size: 1em"
-                @click="RemoveRequest(props.row)"
               />
             </q-td>
           </q-tr>
@@ -67,7 +68,6 @@
       </q-table>
     </div>
   </div>
-
 
   <!-- NEW PROJECT INPUT -->
   <div>
@@ -100,25 +100,55 @@
 
             <div class="q-gutter-md row">
               <div class="col">
-                <q-input type="text" label="Material Cost" prefix="₱" v-model="ProjectData.MaterialCost"/>
+                <q-input
+                  type="text"
+                  label="Material Cost"
+                  prefix="₱"
+                  v-model="ProjectData.MaterialCost"
+                />
               </div>
               <div class="col">
-                <q-input type="text" label="Labor Cost" prefix="₱" v-model="ProjectData.LaborCost"/>
+                <q-input
+                  type="text"
+                  label="Labor Cost"
+                  prefix="₱"
+                  v-model="ProjectData.LaborCost"
+                />
               </div>
               <div class="col">
-                <q-input type="text" label="Contingency" prefix="₱" v-model="ProjectData.Contingency" />
+                <q-input
+                  type="text"
+                  label="Contingency"
+                  prefix="₱"
+                  v-model="ProjectData.Contingency"
+                />
               </div>
               <div class="col">
-                <q-input type="text" label="Total Project Cost" prefix="₱" v-model="ProjectData.TotalProjectCost" />
+                <q-input
+                  type="text"
+                  label="Total Project Cost"
+                  prefix="₱"
+                  v-model="ProjectData.TotalProjectCost"
+                />
               </div>
             </div>
 
             <div class="q-gutter-md row">
               <div class="col">
-                <q-input type="Date" label="Date Started" inputmode="date" v-model="ProjectData.DateStarted"/>
+                <q-input
+                  type="Date"
+                  label="Date Started"
+                  inputmode="date"
+                  v-model="ProjectData.DateStarted"
+                />
               </div>
               <div class="col">
-                <q-input type="Date" label="Target Date of Accomplishment" inputmode="date" v-model="ProjectData.TargetAccomplishment" />
+                <q-input
+                  type="Date"
+                  label="Target Date of Accomplishment"
+                  inputmode="date"
+                  v-model="ProjectData.TargetAccomplishment"
+                />
               </div>
             </div>
 
@@ -132,11 +162,7 @@
               </div>
 
               <div class="col">
-                <q-input
-                  label="City"
-                  v-model="City"
-                  readonly
-                />
+                <q-input label="City" v-model="City" readonly />
               </div>
             </div>
 
@@ -148,9 +174,7 @@
                   type="text"
                 />
               </div>
-              <div class="col">
-
-              </div>
+              <div class="col"></div>
             </div>
 
             <div class="q-gutter-md row">
@@ -167,7 +191,140 @@
 
         <q-card-actions align="right">
           <q-btn color="red" label="Cancel" v-close-popup />
-          <q-btn color="primary" label="Save" v-close-popup @click="InsertNewProject()"/>
+          <q-btn
+            color="primary"
+            label="Save"
+            v-close-popup
+            @click="InsertNewProject()"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+  </div>
+
+  <!-- UPDATE PROJECT  -->
+  <div>
+    <q-dialog v-model="viewData" persistent>
+      <q-card style="min-width: 1250px">
+        <q-card-section>
+          <div class="text-h6">Electrical Project Information</div>
+        </q-card-section>
+
+        <q-separator></q-separator>
+
+        <q-card-section>
+          <div class="q-pa-xs">
+            <div class="q-gutter-md row">
+              <div class="col">
+                <q-input
+                  v-model="ProjectData.ProjectName"
+                  label="Project Name"
+                />
+              </div>
+
+              <div class="col-md-6">
+                <q-input
+                  v-model="ProjectData.ReferenceNo"
+                  label="Reference No."
+                  type="text"
+                />
+              </div>
+            </div>
+
+            <div class="q-gutter-md row">
+              <div class="col">
+                <q-input
+                  type="text"
+                  label="Material Cost"
+                  prefix="₱"
+                  v-model="ProjectData.MaterialCost"
+                />
+              </div>
+              <div class="col">
+                <q-input
+                  type="text"
+                  label="Labor Cost"
+                  prefix="₱"
+                  v-model="ProjectData.LaborCost"
+                />
+              </div>
+              <div class="col">
+                <q-input
+                  type="text"
+                  label="Contingency"
+                  prefix="₱"
+                  v-model="ProjectData.Contingency"
+                />
+              </div>
+              <div class="col">
+                <q-input
+                  type="text"
+                  label="Total Project Cost"
+                  prefix="₱"
+                  v-model="ProjectData.TotalProjectCost"
+                />
+              </div>
+            </div>
+
+            <div class="q-gutter-md row">
+              <div class="col">
+                <q-input
+                  type="Date"
+                  label="Date Started"
+                  inputmode="date"
+                  v-model="ProjectData.DateStarted"
+                />
+              </div>
+              <div class="col">
+                <q-input
+                  type="Date"
+                  label="Target Date of Accomplishment"
+                  inputmode="date"
+                  v-model="ProjectData.TargetAccomplishment"
+                />
+              </div>
+            </div>
+
+            <div class="q-gutter-md row">
+              <div class="col">
+                <q-select
+                  v-model="brgy"
+                  :options="Brgystore.barangay"
+                  label="Location"
+                />
+              </div>
+
+              <div class="col">
+                <q-input label="City" v-model="City" readonly />
+              </div>
+            </div>
+
+            <div class="q-gutter-md row">
+              <div class="col">
+                <q-input
+                  v-model="ProjectData.ProjectIncharge"
+                  label="Project In-Charge"
+                  type="text"
+                />
+              </div>
+              <div class="col"></div>
+            </div>
+
+            <div class="q-gutter-md row">
+              <div class="col">
+                <q-input
+                  v-model="ProjectData.Remarks"
+                  label="Remarks"
+                  type="textarea"
+                />
+              </div>
+            </div>
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn color="red" label="Cancel" v-close-popup />
+          <q-btn color="primary" label="Save" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -183,15 +340,16 @@ export default {
   data() {
     return {
       newData: ref(false),
-      eProjects: ref([]),
-      City: ref('Tagum City'),
+      viewData: ref(false),
+      City: ref("Tagum City"),
+      brgy:[],
       ProjectData: {
         ProjectName: "",
         Location: {
-          0: {
+          //0: {
             Barangay: "",
             Street: "",
-          },
+          //},
         },
         ReferenceNo: "",
         MaterialCost: "",
@@ -202,7 +360,7 @@ export default {
         TotalProjectCost: "",
         NoOfDays: "",
         TargetAccomplishment: "",
-        DateStarted:"",
+        DateStarted: "",
         AccomplishmentPctg: "",
         ProjectIncharge: "",
         Status: "",
@@ -272,6 +430,13 @@ export default {
           headerClasses: "bg-grey-7 text-white",
           headerStyle: "font-size: 1.2 em",
         },
+        {
+          name: "Actions",
+          label: "Actions",
+          headerClasses: "bg-grey-7 text-white",
+          align: "center",
+          headerStyle: "font-size: 1.2 em",
+        },
       ],
     };
   },
@@ -281,7 +446,7 @@ export default {
     const Brgystore = usePhAddress();
 
     StoreElectricalProject.getProjects();
-    console.log("Prject Data list ==> ", StoreElectricalProject.Projects);
+    console.log("Project Data list ==> ", StoreElectricalProject.Projects);
 
     return {
       StoreElectricalProject,
@@ -290,14 +455,56 @@ export default {
   },
 
   methods: {
+    clearEmptyValues(obj) {
+      for (const key in obj) {
+        if (typeof obj[key] === "object") {
+          this.clearEmptyValues(obj[key]);
+        } else if (
+          obj[key] === null ||
+          obj[key] === undefined ||
+          obj[key] === ""
+        ) {
+          obj[key] = "";
+        }
+      }
+    },
+
+    formatDate(value) {
+      if (!value) return "";
+      const date = new Date(value);
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      const day = date.getDate().toString().padStart(2, "0");
+      return `${month}-${day}-${year}`;
+    },
+
+    formatMoney(value) {
+      if (!value) return "0.00";
+      return new Intl.NumberFormat("en-PH", {
+        style: "currency",
+        currency: "PHP",
+      }).format(value);
+    },
+
     async InsertNewProject() {
       this.ProjectData.IsDeleted = false;
       this.ProjectData.Status = "On-going";
 
       const store = useProjectInfoStore();
+      //console.log('data to save ==>', this.ProjectData)
       await store.newProject(this.ProjectData).then((res) => {
-        StoreElectricalProject.getProjects();
+        this.StoreElectricalProject.getProjects();
         this.newData == false;
+      });
+    },
+
+    async ViewProject(id) {
+      const storeProject = useProjectInfoStore();
+      await storeProject.getProject(id).then((res) => {
+        this.ProjectData = storeProject.Project;
+        console.log("fetched data ==>", this.ProjectData);
+        //console.log("fetched data ==>", this.ProjectData.Location.Barangay);
+       this.viewData = true;
       });
     },
   },

@@ -30,7 +30,7 @@ export const useProjectInfoStore = defineStore('ProjectInfoStore', {
 
     async newProject(payload){
       try {
-          const result = await axios.post('http://10.0.1.23:5000/api/eprojects/new', payload);
+          const result = await axios.post('http://10.0.1.23:5000/api/eprojects/newprojects', payload);
           this.Project.push(result.data);
       } catch (error) {
         console.log(`Error! unable to save Request : ${error}`);
