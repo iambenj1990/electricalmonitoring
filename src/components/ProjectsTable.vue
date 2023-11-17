@@ -7,7 +7,7 @@
         color="primary"
         label="Add Project"
         icon="add"
-        @click="newData = true"
+        @click="newData_click()"
       />
     </div>
     <div>
@@ -23,28 +23,39 @@
           'ProjectIncharge',
           'TargetAccomplishment',
           'Location',
+          'Status',
           'Actions',
         ]"
       >
         <template #body="props">
           <q-tr :props="props">
-            <q-td key="ProjectName" style="font-size: 11px">
+            <q-td key="ProjectName" style="font-size: 11px" align="center">
               {{ props.row.ProjectName }}
             </q-td>
-            <q-td key="ReferenceNo" style="font-size: 11px">
+            <q-td key="ReferenceNo" style="font-size: 11px" align="center">
               {{ props.row.ReferenceNo }}
             </q-td>
             <q-td key="TotalProjectCost" style="font-size: 11px" align="center">
               {{ formatMoney(props.row.TotalProjectCost) }}
             </q-td>
-            <q-td key="ProjectIncharge" style="font-size: 11px">
+            <q-td key="ProjectIncharge" style="font-size: 11px" align="center">
               {{ props.row.ProjectIncharge }}
             </q-td>
-            <q-td key="TargetAccomplishment" style="font-size: 11px">
+            <q-td
+              key="TargetAccomplishment"
+              style="font-size: 11px"
+              align="center"
+            >
               {{ formatDate(props.row.TargetAccomplishment) }}
             </q-td>
-            <q-td key="Barangay" style="font-size: 11px">
+            <q-td key="Barangay" style="font-size: 11px" align="center">
               {{ props.row.Location.Barangay }}
+            </q-td>
+
+            <q-td key="Status" style="font-size: 11px" align="center">
+              <q-chip :class="colorMyStatus(props.row.Status)">
+                {{ props.row.Status }}
+              </q-chip>
             </q-td>
 
             <q-td key="Actions" align="center">
@@ -269,9 +280,8 @@
             <div class="q-gutter-md row">
               <div class="col">
                 <q-input
-                  type="Date"
+                  type="date"
                   label="Date Started"
-                  inputmode="date"
                   v-model="ProjectData.DateStarted"
                 />
               </div>
@@ -279,7 +289,6 @@
                 <q-input
                   type="Date"
                   label="Target Date of Accomplishment"
-                  inputmode="date"
                   v-model="ProjectData.TargetAccomplishment"
                 />
               </div>
@@ -288,7 +297,7 @@
             <div class="q-gutter-md row">
               <div class="col">
                 <q-select
-                  v-model="brgy"
+                  v-model="ProjectData.Location.Barangay"
                   :options="Brgystore.barangay"
                   label="Location"
                 />
@@ -319,12 +328,31 @@
                 />
               </div>
             </div>
+
+            <div class="q-gutter-md row">
+              <div class="col">
+                <input
+                  ref="fileInput"
+                  type="file"
+                  style="display: none"
+                  @change="handleFileChange"
+                />
+
+                <q-input
+                  v-model="uploadedFileName"
+                  outlined
+                  label="File Name"
+                  readonly
+                  @click="openFileInput"
+                />
+              </div>
+            </div>
           </div>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn color="red" label="Cancel" v-close-popup />
-          <q-btn color="primary" label="Save" v-close-popup />
+          <q-btn color="primary" label="Update" v-close-popup @click="save_image()"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -336,19 +364,24 @@ import { ref } from "vue";
 import { useProjectInfoStore } from "stores/projectStore.js";
 import { usePhAddress } from "stores/TagumAddressStore.js";
 
+
+
 export default {
   data() {
     return {
+      uploadedFileName: "",
       newData: ref(false),
       viewData: ref(false),
+      //fetchAccDate:ref(new Date(Date.now)),
+      //fetchStartDate: ref(new Date(Date.now)),
       City: ref("Tagum City"),
-      brgy:[],
+      brgy: [],
       ProjectData: {
         ProjectName: "",
         Location: {
           //0: {
-            Barangay: "",
-            Street: "",
+          Barangay: "",
+          Street: "",
           //},
         },
         ReferenceNo: "",
@@ -375,7 +408,7 @@ export default {
           label: "ID",
           field: "_id",
           sortable: true,
-          align: "left",
+          align: "center",
           headerClasses: "bg-grey-7 text-white",
           headerStyle: "font-size: 1.2 em",
         },
@@ -384,7 +417,7 @@ export default {
           label: "Project Name",
           field: "ProjectName",
           sortable: true,
-          align: "left",
+          align: "center",
           headerClasses: "bg-grey-7 text-white",
           headerStyle: "font-size: 1.2 em",
         },
@@ -393,7 +426,7 @@ export default {
           label: "Reference No",
           field: "ReferenceNo",
           sortable: true,
-          align: "left",
+          align: "center",
           headerClasses: "bg-grey-7 text-white",
           headerStyle: "font-size: 1.2 em",
         },
@@ -401,7 +434,7 @@ export default {
           name: "TotalProjectCost",
           label: "Total Project Cost",
           field: "TotalProjectCost",
-          align: "left",
+          align: "center",
           headerClasses: "bg-grey-7 text-white",
           headerStyle: "font-size: 1.2 em",
         },
@@ -410,7 +443,7 @@ export default {
           label: "Project In-charge",
           field: "ProjectIncharge",
           sortable: true,
-          align: "left",
+          align: "center",
           headerClasses: "bg-grey-7 text-white",
           headerStyle: "font-size: 1.2 em",
         },
@@ -418,17 +451,25 @@ export default {
           name: "TargetAccomplishment",
           label: "Target Accomplishment",
           field: "TargetAccomplishment",
-          align: "left",
           headerClasses: "bg-grey-7 text-white",
           headerStyle: "font-size: 1.2 em",
+          align: "center",
         },
         {
           name: "Location",
           label: "Location",
           field: (row) => row.Location.Barangay,
-          align: "left",
+          align: "center",
           headerClasses: "bg-grey-7 text-white",
           headerStyle: "font-size: 1.2 em",
+        },
+        {
+          name: "Status",
+          label: "Status",
+          headerClasses: "bg-grey-7 text-white",
+          align: "center",
+          headerStyle: "font-size: 1.2 em",
+          field: "Status",
         },
         {
           name: "Actions",
@@ -442,6 +483,8 @@ export default {
   },
 
   setup() {
+
+
     const StoreElectricalProject = useProjectInfoStore();
     const Brgystore = usePhAddress();
 
@@ -455,6 +498,96 @@ export default {
   },
 
   methods: {
+    save_image() {
+
+      const fs = require("fs");
+      const path = require("path");
+      // Replace 'sourceImagePath' and 'destinationFolderPath' with your actual file paths
+      const sourceImagePath = this.uploadedFileName;
+      const destinationFolderPath = "Q:/Engineering/server/public/uploads/equipments/";
+
+      // Extract the file name from the source image path
+      const fileName = path.basename(sourceImagePath);
+
+      // Construct the destination path by combining the destination folder and file name
+      const destinationPath = path.join(destinationFolderPath, fileName);
+
+      // Copy the image file
+      fs.copyFile(sourceImagePath, destinationPath, (err) => {
+        if (err) {
+          console.error("Error copying image:", err);
+        } else {
+          console.log("Image copied successfully!");
+        }
+      });
+    },
+
+    openFileInput() {
+      // Trigger a click event on the hidden file input
+      this.$refs.fileInput.click();
+    },
+    handleFileChange(event) {
+      const fileInput = event.target;
+      const file = fileInput.files[0];
+
+      // Update the file name when a file is selected
+      this.uploadedFileName = fileInput.value;
+      console.log("filename=>", this.uploadedFileName);
+    },
+
+    colorMyStatus(status) {
+      switch (status) {
+        case "Recieved":
+          return {
+            recieve: status === "Recieved",
+          };
+        case "On-going":
+          return {
+            ongoing: status === "On-going",
+          };
+
+        case "Finished":
+          return {
+            finish: status === "Finished",
+          };
+      }
+    },
+
+    clearData() {
+      this.ProjectData.ProjectName = "";
+      this.ProjectData.ProjectIncharge = "";
+      this.ProjectData.Location.Barangay = "";
+      this.ProjectData.ReferenceNo = "";
+      this.ProjectData.MaterialCost = "";
+      this.ProjectData.MaterialBalance = "";
+      this.ProjectData.LaborCost = "";
+      this.ProjectData.LaborBalance = "";
+      this.ProjectData.Contingency = "";
+      this.ProjectData.TotalProjectCost = "";
+      this.ProjectData.NoOfDays = "";
+      this.ProjectData.DateStarted = "";
+      this.ProjectData.TargetAccomplishment = "";
+      this.ProjectData.AccomplishmentPctg = "";
+      this.ProjectData.ProjectIncharge = "";
+      this.ProjectData.Status = "";
+      this.ProjectData.IsDeleted = "";
+      this.ProjectData.Remarks = "";
+    },
+
+    newData_click() {
+      // this.clearEmptyValues(this.ProjectData);
+      console.log(`Clear Data Clicked!`);
+      this.clearData();
+      this.newData = true;
+    },
+    calculateTotalProjectCost() {
+      this.ProjectData.TotalProjectCost =
+        this.ProjectData.MaterialCost +
+        this.ProjectData.LaborCost +
+        this.ProjectData.Contingency;
+      return this.formatMoney(projectCost);
+    },
+
     clearEmptyValues(obj) {
       for (const key in obj) {
         if (typeof obj[key] === "object") {
@@ -475,7 +608,8 @@ export default {
       const year = date.getFullYear();
       const month = (date.getMonth() + 1).toString().padStart(2, "0");
       const day = date.getDate().toString().padStart(2, "0");
-      return `${month}-${day}-${year}`;
+      //return `${month}/${day}/${year}`;
+      return `${year}-${month}-${day}`;
     },
 
     formatMoney(value) {
@@ -491,7 +625,7 @@ export default {
       this.ProjectData.Status = "On-going";
 
       const store = useProjectInfoStore();
-      //console.log('data to save ==>', this.ProjectData)
+      console.log("before to save ==> ", this.ProjectData);
       await store.newProject(this.ProjectData).then((res) => {
         this.StoreElectricalProject.getProjects();
         this.newData == false;
@@ -499,14 +633,40 @@ export default {
     },
 
     async ViewProject(id) {
+      this.clearEmptyValues(this.ProjectData);
       const storeProject = useProjectInfoStore();
-      await storeProject.getProject(id).then((res) => {
+      await storeProject.getProject(id).then(() => {
         this.ProjectData = storeProject.Project;
+        this.ProjectData.TargetAccomplishment = this.formatDate(
+          new Date(this.ProjectData.TargetAccomplishment)
+        );
+        this.ProjectData.DateStarted = this.formatDate(
+          new Date(this.ProjectData.DateStarted)
+        );
+
+        //   console.log(" this.fetchAccDate data ==>", this.fetchAccDate);
+        //  console.log(" this.fetchStartDate data ==>",  this.fetchStartDate);
+
         console.log("fetched data ==>", this.ProjectData);
-        //console.log("fetched data ==>", this.ProjectData.Location.Barangay);
-       this.viewData = true;
+        this.viewData = true;
       });
     },
   },
 };
 </script>
+<style>
+.finish {
+  background-color: rgb(63, 45, 128);
+  color: azure;
+}
+
+.ongoing {
+  background-color: orange;
+  color: azure;
+}
+
+.recieve {
+  background-color: rgb(26, 173, 26);
+  color: azure;
+}
+</style>

@@ -4,7 +4,7 @@ import axios from 'axios';
 export const useProjectInfoStore = defineStore('ProjectInfoStore', {
   state: () => ({
     Projects:[],
-    Project:{},
+    Project:[],
   }),
 
   actions: {
@@ -12,7 +12,7 @@ export const useProjectInfoStore = defineStore('ProjectInfoStore', {
       try {
         const result = await axios.get('http://10.0.1.23:5000/api/eprojects/');
         this.Projects = result.data;
-      //  console.log("JobOrders=",this.JobOrders)
+       console.log("JobOrders=",this.Projects)
 
       } catch (error) {
         console.log(`Error fetching Request list : ${error}`)
@@ -23,6 +23,7 @@ export const useProjectInfoStore = defineStore('ProjectInfoStore', {
       try {
         const result = await axios.get(`http://10.0.1.23:5000/api/eprojects/${val}`);
         this.Project = result.data;
+        console.log("data=>",result.data);
       } catch (error) {
         console.log(`Error fetching Request : ${error}`)
       }
