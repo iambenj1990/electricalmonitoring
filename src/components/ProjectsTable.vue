@@ -7,7 +7,7 @@
         color="primary"
         label="Add Project"
         icon="add"
-        @click="newData_click()"
+        @click="newData = true"
       />
     </div>
     <div>
@@ -17,6 +17,7 @@
         :columns="columns"
         row-key="_id"
         :visible-columns="[
+          'Withdrawals',
           'ProjectName',
           'ReferenceNo',
           'TotalProjectCost',
@@ -29,6 +30,15 @@
       >
         <template #body="props">
           <q-tr :props="props">
+            <q-td key="Withdrawals" style="font-size: 11px" align="center">
+              <q-btn
+                flat
+                icon="shopping_cart"
+                color="green"
+                style="font-size: 1em"
+                @click="ViewMaterials = true"
+              />
+            </q-td>
             <q-td key="ProjectName" style="font-size: 11px" align="center">
               {{ props.row.ProjectName }}
             </q-td>
@@ -216,7 +226,7 @@
   <!-- UPDATE PROJECT  -->
   <div>
     <q-dialog v-model="viewData" persistent>
-      <q-card style="min-width: 1250px">
+      <q-card style="min-width: 800px">
         <q-card-section>
           <div class="text-h6">Electrical Project Information</div>
         </q-card-section>
@@ -247,7 +257,6 @@
                 <q-input
                   type="text"
                   label="Material Cost"
-                  prefix="₱"
                   v-model="ProjectData.MaterialCost"
                 />
               </div>
@@ -255,7 +264,6 @@
                 <q-input
                   type="text"
                   label="Labor Cost"
-                  prefix="₱"
                   v-model="ProjectData.LaborCost"
                 />
               </div>
@@ -263,7 +271,6 @@
                 <q-input
                   type="text"
                   label="Contingency"
-                  prefix="₱"
                   v-model="ProjectData.Contingency"
                 />
               </div>
@@ -271,7 +278,6 @@
                 <q-input
                   type="text"
                   label="Total Project Cost"
-                  prefix="₱"
                   v-model="ProjectData.TotalProjectCost"
                 />
               </div>
@@ -329,7 +335,7 @@
               </div>
             </div>
 
-            <div class="q-gutter-md row">
+            <!-- <div class="q-gutter-md row">
               <div class="col">
                 <input
                   ref="fileInput"
@@ -346,14 +352,116 @@
                   @click="openFileInput"
                 />
               </div>
-            </div>
+            </div> -->
           </div>
-        </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn color="red" label="Cancel" v-close-popup />
-          <q-btn color="primary" label="Update" v-close-popup @click="save_image()"/>
-        </q-card-actions>
+          <q-card-actions>
+            <div class="col">
+              <q-btn
+                icon="shopping_cart_checkout"
+                color="green"
+                label="Withdraw Materials"
+                @click="newData_click()"
+              />
+            </div>
+            <div class="col-mx q-gutter-md">
+              <q-btn color="red" label="Cancel" v-close-popup />
+              <q-btn
+                color="primary"
+                label="Update"
+                v-close-popup
+                @click="save_image()"
+              />
+            </div>
+
+            <!-- WITHDRAW MATERIALS -->
+            <div>
+              <q-dialog v-model="ViewMaterials" persistent>
+                <q-card style="min-width: 1250px">
+                  <q-card-section>
+                    <div class="text-h6">
+                      <q-icon name="shopping_cart" size="md" /> Materials List
+                    </div>
+                  </q-card-section>
+
+                  <q-separator></q-separator>
+
+                  <q-card-section>
+                    <div class="q-gutter-md">
+                      <div class="q-gutter-md row">
+                        <div class="col">
+                          <q-input
+                            type="text"
+                            label="Project Name"
+                            v-model="ProjectData.MaterialCost"
+                          />
+                        </div>
+                        <div class="col">
+                          <q-input
+                            type="text"
+                            label="Reference No."
+                            v-model="ProjectData.LaborCost"
+                          />
+                        </div>
+                        <div class="col">
+                          <q-input
+                            type="text"
+                            label="Contingency"
+                            v-model="ProjectData.Contingency"
+                          />
+                        </div>
+                        <div class="col">
+                          <q-input
+                            type="text"
+                            label="Total Project Cost"
+                            v-model="ProjectData.TotalProjectCost"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </q-card-section>
+
+                  <q-card-section>
+                    <div class="q-pa-xs">
+                      <q-btn
+                        flat
+                        rounded
+                        label="Withdraw"
+                        class="btnColor"
+                        icon="add"
+                        v-close-popup
+                      />
+                      <div class="q-gutter-md col">
+                        <div class="q-pa-sm">
+                          <q-table
+                            :rows="rows"
+                            :columns="Materialscolumns"
+                            row-key="name"
+                            :visible-columns="[
+                              'MaterialName',
+                              'MaterialDescriptions',
+                              'MaterialQuantity',
+                              'MaterialUnit',
+                              'MaterialPrice',
+                              'Actions',
+                            ]"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </q-card-section>
+
+                  <q-card-actions align="right">
+                    <q-btn color="red" label="Cancel" v-close-popup />
+                    <q-btn color="primary" label="Save" v-close-popup />
+                  </q-card-actions>
+                </q-card>
+              </q-dialog>
+            </div>
+
+            <!-- WITHDRAW MATERIALS UP TO HERE -->
+          </q-card-actions>
+        </q-card-section>
       </q-card>
     </q-dialog>
   </div>
@@ -364,14 +472,13 @@ import { ref } from "vue";
 import { useProjectInfoStore } from "stores/projectStore.js";
 import { usePhAddress } from "stores/TagumAddressStore.js";
 
-
-
 export default {
   data() {
     return {
       uploadedFileName: "",
       newData: ref(false),
       viewData: ref(false),
+      ViewMaterials: ref(false),
       //fetchAccDate:ref(new Date(Date.now)),
       //fetchStartDate: ref(new Date(Date.now)),
       City: ref("Tagum City"),
@@ -402,7 +509,80 @@ export default {
       },
       StatusSelections: ["Recieved", "On-going", "Finished"],
 
+      Materialscolumns: [
+        {
+          name: "ID",
+          label: "ID",
+          //field: "_id",
+          sortable: true,
+          align: "center",
+          headerClasses: "bg-grey-7 text-white",
+          headerStyle: "font-size: 1.2 em",
+        },
+        {
+          name: "MaterialName",
+          label: "Material Name",
+          //  field: "_id",
+          sortable: true,
+          align: "center",
+          headerClasses: "bg-grey-7 text-white",
+          headerStyle: "font-size: 1.2 em",
+        },
+        {
+          name: "MaterialDescriptions",
+          label: "Descriptions",
+          //field: "_id",
+          sortable: true,
+          align: "center",
+          headerClasses: "bg-grey-7 text-white",
+          headerStyle: "font-size: 1.2 em",
+        },
+        {
+          name: "MaterialQuantity",
+          label: "Quantity",
+          //field: "_id",
+          sortable: true,
+          align: "center",
+          headerClasses: "bg-grey-7 text-white",
+          headerStyle: "font-size: 1.2 em",
+        },
+        {
+          name: "MaterialUnit",
+          label: "Unit",
+          //field: "_id",
+          sortable: true,
+          align: "center",
+          headerClasses: "bg-grey-7 text-white",
+          headerStyle: "font-size: 1.2 em",
+        },
+        {
+          name: "MaterialPrice",
+          label: "Price",
+          //field: "_id",
+          sortable: true,
+          align: "center",
+          headerClasses: "bg-grey-7 text-white",
+          headerStyle: "font-size: 1.2 em",
+        },
+        {
+          name: "Actions",
+          label: "Actions",
+          //field: "_id",
+          sortable: true,
+          align: "center",
+          headerClasses: "bg-grey-7 text-white",
+          headerStyle: "font-size: 1.2 em",
+        },
+      ],
+
       columns: [
+        {
+          name: "Withdrawals",
+          label: "Withdrawals",
+          headerClasses: "bg-grey-7 text-white",
+          align: "center",
+          headerStyle: "font-size: 1.2 em",
+        },
         {
           name: "ID",
           label: "ID",
@@ -483,8 +663,6 @@ export default {
   },
 
   setup() {
-
-
     const StoreElectricalProject = useProjectInfoStore();
     const Brgystore = usePhAddress();
 
@@ -499,12 +677,12 @@ export default {
 
   methods: {
     save_image() {
-
       const fs = require("fs");
       const path = require("path");
       // Replace 'sourceImagePath' and 'destinationFolderPath' with your actual file paths
       const sourceImagePath = this.uploadedFileName;
-      const destinationFolderPath = "Q:/Engineering/server/public/uploads/equipments/";
+      const destinationFolderPath =
+        "Q:/Engineering/server/public/uploads/equipments/";
 
       // Extract the file name from the source image path
       const fileName = path.basename(sourceImagePath);
@@ -574,12 +752,6 @@ export default {
       this.ProjectData.Remarks = "";
     },
 
-    newData_click() {
-      // this.clearEmptyValues(this.ProjectData);
-      console.log(`Clear Data Clicked!`);
-      this.clearData();
-      this.newData = true;
-    },
     calculateTotalProjectCost() {
       this.ProjectData.TotalProjectCost =
         this.ProjectData.MaterialCost +
@@ -625,7 +797,7 @@ export default {
       this.ProjectData.Status = "On-going";
 
       const store = useProjectInfoStore();
-      console.log("before to save ==> ", this.ProjectData);
+      // console.log("before to save ==> ", this.ProjectData);
       await store.newProject(this.ProjectData).then((res) => {
         this.StoreElectricalProject.getProjects();
         this.newData == false;
@@ -644,10 +816,19 @@ export default {
           new Date(this.ProjectData.DateStarted)
         );
 
-        //   console.log(" this.fetchAccDate data ==>", this.fetchAccDate);
-        //  console.log(" this.fetchStartDate data ==>",  this.fetchStartDate);
-
-        console.log("fetched data ==>", this.ProjectData);
+        this.ProjectData.MaterialCost = this.formatMoney(
+          this.ProjectData.MaterialCost
+        );
+        this.ProjectData.TotalProjectCost = this.formatMoney(
+          this.ProjectData.TotalProjectCost
+        );
+        this.ProjectData.LaborCost = this.formatMoney(
+          this.ProjectData.LaborCost
+        );
+        this.ProjectData.Contingency = this.formatMoney(
+          this.ProjectData.Contingency
+        );
+        //console.log("fetched data ==>", this.ProjectData);
         this.viewData = true;
       });
     },
@@ -668,5 +849,9 @@ export default {
 .recieve {
   background-color: rgb(26, 173, 26);
   color: azure;
+}
+
+.btnColor {
+  color: seagreen;
 }
 </style>
