@@ -27,7 +27,16 @@
           'Status',
           'Actions',
         ]"
+        :filter="filter"
       >
+      <template v-slot:top-right>
+        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+      </template>
+
         <template #body="props">
           <q-tr :props="props">
             <q-td key="Withdrawals" style="font-size: 11px" align="center">
@@ -373,97 +382,102 @@
                 @click="save_image()"
               />
             </div>
-
-            <!-- WITHDRAW MATERIALS -->
-            <div>
-              <q-dialog v-model="ViewMaterials" persistent>
-                <q-card style="min-width: 1250px">
-                  <q-card-section>
-                    <div class="text-h6">
-                      <q-icon name="shopping_cart" size="md" /> Materials List
-                    </div>
-                  </q-card-section>
-
-                  <q-separator></q-separator>
-
-                  <q-card-section>
-                    <div class="q-gutter-md">
-                      <div class="q-gutter-md row">
-                        <div class="col">
-                          <q-input
-                            type="text"
-                            label="Project Name"
-                            v-model="ProjectData.MaterialCost"
-                          />
-                        </div>
-                        <div class="col">
-                          <q-input
-                            type="text"
-                            label="Reference No."
-                            v-model="ProjectData.LaborCost"
-                          />
-                        </div>
-                        <div class="col">
-                          <q-input
-                            type="text"
-                            label="Contingency"
-                            v-model="ProjectData.Contingency"
-                          />
-                        </div>
-                        <div class="col">
-                          <q-input
-                            type="text"
-                            label="Total Project Cost"
-                            v-model="ProjectData.TotalProjectCost"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </q-card-section>
-
-                  <q-card-section>
-                    <div class="q-pa-xs">
-                      <q-btn
-                        flat
-                        rounded
-                        label="Withdraw"
-                        class="btnColor"
-                        icon="add"
-                        v-close-popup
-                      />
-                      <div class="q-gutter-md col">
-                        <div class="q-pa-sm">
-                          <q-table
-                            :rows="rows"
-                            :columns="Materialscolumns"
-                            row-key="name"
-                            :visible-columns="[
-                              'MaterialName',
-                              'MaterialDescriptions',
-                              'MaterialQuantity',
-                              'MaterialUnit',
-                              'MaterialPrice',
-                              'Actions',
-                            ]"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </q-card-section>
-
-                  <q-card-actions align="right">
-                    <q-btn color="red" label="Cancel" v-close-popup />
-                    <q-btn color="primary" label="Save" v-close-popup />
-                  </q-card-actions>
-                </q-card>
-              </q-dialog>
-            </div>
-
-            <!-- WITHDRAW MATERIALS UP TO HERE -->
           </q-card-actions>
         </q-card-section>
       </q-card>
     </q-dialog>
+  </div>
+  <!-- WITHDRAW MATERIALS -->
+  <div>
+    <div>
+      <q-dialog v-model="ViewMaterials" persistent>
+        <q-card style="min-width: 1250px">
+          <q-card-section>
+            <div class="text-h6">
+              <q-icon name="shopping_cart" size="md" /> Materials List
+            </div>
+          </q-card-section>
+          <q-separator></q-separator>
+          <q-card-section class="q-pa-sm">
+            <div class="q-pa-sm">
+              <div class="q-gutter-md row">
+                <div class="col">
+                  <q-input
+                    type="text"
+                    label="Project Name"
+                    v-model="ProjectData.ProjectName"
+                    readonly
+                  />
+                </div>
+                <div class="col">
+                  <q-input
+                    type="text"
+                    label="Reference No."
+                    v-model="ProjectData.ReferenceNo"
+                    readonly
+                  />
+                </div>
+
+                <div class="col">
+                  <q-input
+                    type="text"
+                    label="Total Project Cost"
+                    v-model="ProjectData.TotalProjectCost"
+                    readonly
+                  />
+                </div>
+                <div class="col">
+                  <q-input
+                    type="text"
+                    label="Material Balance"
+                    v-model="ProjectData.MaterialBalance"
+                    readonly
+                  />
+                </div>
+              </div>
+
+            </div>
+          </q-card-section>
+
+          <q-card-section>
+            <div class="q-pa-xs">
+              <q-btn
+                flat
+                rounded
+                label="Withdraw"
+                class="btnColor"
+                icon="add"
+                v-close-popup
+              />
+              <div class="q-gutter-md col">
+                <div class="q-pa-sm">
+                  <q-table
+                    :rows="rows"
+                    :columns="Materialscolumns"
+                    row-key="name"
+                    :visible-columns="[
+                      'MaterialName',
+                      'MaterialDescriptions',
+                      'MaterialQuantity',
+                      'MaterialUnit',
+                      'MaterialPrice',
+                      'Actions',
+                    ]"
+                  />
+                </div>
+              </div>
+            </div>
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn color="red" label="Cancel" v-close-popup />
+            <q-btn color="primary" label="Save" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+    </div>
+
+    <!-- WITHDRAW MATERIALS UP TO HERE -->
   </div>
 </template>
 
@@ -475,6 +489,7 @@ import { usePhAddress } from "stores/TagumAddressStore.js";
 export default {
   data() {
     return {
+      filter:ref(''),
       uploadedFileName: "",
       newData: ref(false),
       viewData: ref(false),
