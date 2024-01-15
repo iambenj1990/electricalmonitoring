@@ -29,6 +29,26 @@ export const useProjectInfoStore = defineStore('ProjectInfoStore', {
       }
     },
 
+    async getMaterials(projectID){
+      try {
+        const result = await axios.get(`http://10.0.1.23:5000/api/eprojects/${projectID}/materials`)
+        this.Project =result.data;
+        console.log("data=>",result.data);
+      } catch (error) {
+        console.log(`Error fetching withdrawn materials for this project., ${error}`)
+      }
+    },
+
+    async postMaterials(projectID,payload){
+      try {
+        const result = await axios.get(`http://10.0.1.23:5000/api/eprojects/${projectID}/materials/new`)
+        this.Project.MaterialsWithdrawn.push(result.data);
+        console.log("data=>",result.data);
+      } catch (error) {
+        console.log(`Error fetching withdrawn materials for this project., ${error}`)
+      }
+    },
+
     async newProject(payload){
       try {
           const result = await axios.post('http://10.0.1.23:5000/api/eprojects/newprojects', payload);

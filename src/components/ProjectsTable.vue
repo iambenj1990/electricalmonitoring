@@ -45,7 +45,7 @@
                 icon="shopping_cart"
                 color="green"
                 style="font-size: 1em"
-                @click="ViewMaterials = true"
+                @click="ViewProject(props.row._id,'View Materials')"
               />
             </q-td>
             <q-td key="ProjectName" style="font-size: 11px" align="center">
@@ -83,7 +83,7 @@
                 icon="edit"
                 color="primary"
                 style="font-size: 1em"
-                @click="ViewProject(props.row._id)"
+                @click="ViewProject(props.row._id,'View Project')"
               >
               </q-btn>
               <q-btn
@@ -388,7 +388,7 @@
     </q-dialog>
   </div>
   <!-- WITHDRAW MATERIALS -->
-  <div>
+
     <div>
       <q-dialog v-model="ViewMaterials" persistent>
         <q-card style="min-width: 1250px">
@@ -447,7 +447,7 @@
                 label="Withdraw"
                 class="btnColor"
                 icon="add"
-                v-close-popup
+                @click="ViewAvailMaterials=true"
               />
               <div class="q-gutter-md col">
                 <div class="q-pa-sm">
@@ -477,8 +477,52 @@
       </q-dialog>
     </div>
 
-    <!-- WITHDRAW MATERIALS UP TO HERE -->
-  </div>
+
+    <div>
+      <q-dialog v-model="ViewAvailMaterials" persistent  >
+        <q-card style="min-width: 50%; min-height: 50%;">
+          <q-card-section>
+            <div class="text-h6">
+              <q-icon name="shopping_cart" size="md" /> List of Available Materials
+            </div>
+          </q-card-section>
+          <q-separator></q-separator>
+          <q-card-section class="q-pa-sm">
+
+          </q-card-section>
+
+          <q-card-section>
+            <div class="q-pa-xs">
+              <div class="q-gutter-md col">
+                <div class="q-pa-sm">
+                  <q-table
+                    :rows="rows"
+                    :columns="Materialscolumns"
+                    row-key="name"
+                    :visible-columns="[
+                      'MaterialName',
+                      'MaterialDescriptions',
+                      'MaterialQuantity',
+                      'MaterialUnit',
+                      'MaterialPrice',
+                      'Actions',
+                    ]"
+                  />
+                </div>
+              </div>
+            </div>
+          </q-card-section>
+
+          <q-card-section align="right">
+            <!-- <q-btn color="red" label="Cancel" v-close-popup /> -->
+            <q-btn color="red" label="Close" v-close-popup />
+          </q-card-section>
+        </q-card>
+      </q-dialog>
+    </div>
+
+
+
 </template>
 
 <script>
@@ -494,6 +538,7 @@ export default {
       newData: ref(false),
       viewData: ref(false),
       ViewMaterials: ref(false),
+      ViewAvailMaterials:ref(false),
       //fetchAccDate:ref(new Date(Date.now)),
       //fetchStartDate: ref(new Date(Date.now)),
       City: ref("Tagum City"),
@@ -517,6 +562,13 @@ export default {
         TargetAccomplishment: "",
         DateStarted: "",
         AccomplishmentPctg: "",
+        MaterialsWithdrawn: [{
+          MaterialName: "",
+          Description: "",
+          Quantity: "",
+          Unit: "",
+          Price:"",
+        }],
         ProjectIncharge: "",
         Status: "",
         Remarks: "",
@@ -819,10 +871,11 @@ export default {
       });
     },
 
-    async ViewProject(id) {
+    async ViewProject(id,btnclick) {
       this.clearEmptyValues(this.ProjectData);
       const storeProject = useProjectInfoStore();
       await storeProject.getProject(id).then(() => {
+
         this.ProjectData = storeProject.Project;
         this.ProjectData.TargetAccomplishment = this.formatDate(
           new Date(this.ProjectData.TargetAccomplishment)
@@ -844,7 +897,24 @@ export default {
           this.ProjectData.Contingency
         );
         //console.log("fetched data ==>", this.ProjectData);
-        this.viewData = true;
+
+
+
+        switch (btnclick) {
+        case "View Project":
+          this.viewData = true;
+          break;
+
+        case "View Materials":
+          this.ViewMaterials =true;
+          break;
+
+        case "View Available Materials":
+          this.ViewAvailMaterials =true;
+          break;
+
+      }
+
       });
     },
   },
