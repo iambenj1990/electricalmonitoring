@@ -497,14 +497,12 @@
                 <div class="q-pa-sm">
                   <q-table
                     :rows="rows"
-                    :columns="Materialscolumns"
+                    :columns="MaterialAvailableColumns"
                     row-key="name"
                     :visible-columns="[
                       'MaterialName',
-                      'MaterialDescriptions',
-                      'MaterialQuantity',
-                      'MaterialUnit',
-                      'MaterialPrice',
+                      'Cost',
+                      'Unit',
                       'Actions',
                     ]"
                   />
@@ -575,6 +573,45 @@ export default {
         IsDeleted: false,
       },
       StatusSelections: ["Recieved", "On-going", "Finished"],
+      MaterialAvailableColumns:[
+        {
+          name: "MaterialName",
+          label: "Material Name",
+          //field: "_id",
+          sortable: true,
+          align: "center",
+          headerClasses: "bg-grey-7 text-white",
+          headerStyle: "font-size: 1.2 em",
+        },
+        {
+          name: "Cost",
+          label: "Cost",
+          //field: "_id",
+          sortable: true,
+          align: "center",
+          headerClasses: "bg-grey-7 text-white",
+          headerStyle: "font-size: 1.2 em",
+        },
+        {
+          name: "Unit",
+          label: "Unit",
+          //field: "_id",
+          sortable: true,
+          align: "center",
+          headerClasses: "bg-grey-7 text-white",
+          headerStyle: "font-size: 1.2 em",
+        },
+        {
+          name: "Actions",
+          label: "Actions",
+          //field: "_id",
+          sortable: true,
+          align: "center",
+          headerClasses: "bg-grey-7 text-white",
+          headerStyle: "font-size: 1.2 em",
+        },
+
+    ],
 
       Materialscolumns: [
         {

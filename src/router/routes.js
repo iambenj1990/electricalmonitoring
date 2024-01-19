@@ -7,10 +7,10 @@ const routes = [
       { path: '', component: () => import('pages/IndexPage.vue') }
     ]
   },
-  // {
-  //   path: '/maintenance',
-  //   component: () => import('components/MaintenanceTable.vue'),
-  // },
+  {
+    path: '/maintenance',
+    component: () => import('../components/UploadItem.vue'),
+  },
 
 
 

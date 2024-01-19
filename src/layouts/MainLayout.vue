@@ -49,17 +49,18 @@
                 >
               </q-item-section>
             </q-item>
-             <!--<q-item clickable v-ripple @click="toggleSection('it')">
+             <q-item clickable v-ripple @click="toggleSection('GoodItems')">
               <q-item-section class="q-ml-sm">
                 <q-item-label>
                   <q-icon
                     name="computer"
                     class="q-ml-md q-mr-md"
-                  />IT Equipment</q-item-label
+                  />Upload Items
+                  </q-item-label
                 >
               </q-item-section>
             </q-item>
-            <q-item clickable v-ripple @click="toggleSection('project')">
+            <!-- <q-item clickable v-ripple @click="toggleSection('project')">
               <q-item-section class="q-ml-sm">
                 <q-item-label>
                   <q-icon name="work" class="q-ml-md q-mr-md" />
@@ -102,10 +103,10 @@
     <q-page-container v-if="showProjects">
       <Projects />
     </q-page-container>
-    <!-- <q-page-container v-if="showMachine">
-      <MachineTable />
+     <q-page-container v-if="showGoodItems">
+      <GoodItems />
     </q-page-container>
-    <q-page-container v-if="showProject">
+    <!--<q-page-container v-if="showProject">
       <ProjectTable />
     </q-page-container>
     <q-page-container v-if="showUser">
@@ -119,17 +120,18 @@ import { defineComponent, ref } from "vue";
 // import EssentialLink from "components/EssentialLink.vue";
 import Maintenance from "components/MaintenanceTable.vue";
 import Projects from "components/ProjectsTable.vue";
+import GoodItems from "components/UploadItem.vue";
 
 
 
 
 export default defineComponent({
-  name: "MainLayout",
-
   components: {
     // EssentialLink,
     Maintenance,
-    Projects
+    Projects,
+    GoodItems,
+
   },
 
   setup() {
@@ -148,6 +150,7 @@ export default defineComponent({
       submenuOpen: false,
       showMaintenance: false,
       showProjects: false,
+      showGoodItems: false,
     };
   },
   methods: {
@@ -161,7 +164,7 @@ export default defineComponent({
     toggleSection(section) {
       this.showMaintenance = section === "ElMaintenance";
       this.showProjects = section === "Project";
-      // this.showIt = section === "it";
+      this.showGoodItems = section === "GoodItems";
       // this.showMachine = section === "machine";
 
       // this.showUser = section === "user";
