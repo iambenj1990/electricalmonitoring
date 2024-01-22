@@ -8,8 +8,12 @@ const routes = [
     ]
   },
   {
-    path: '/maintenance',
+    path: '/UploadMaterial',
     component: () => import('../components/UploadItem.vue'),
+  },
+  {
+    path: '/MaterialEntry',
+    component: () => import('../components/ItemEntry.vue'),
   },
 
 

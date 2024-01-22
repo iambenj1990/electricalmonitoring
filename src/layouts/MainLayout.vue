@@ -11,9 +11,17 @@
           @click="toggleLeftDrawer"
         />
 
-        <q-toolbar-title> CEO - Electrical Division Project & Maintenance Monitoring System </q-toolbar-title>
+        <q-toolbar-title>
+          CEO - Electrical Division Project & Maintenance Monitoring System
+        </q-toolbar-title>
 
-         <q-btn flat icon="logout" size="md" style="color: white;" label="Logout" />
+        <q-btn
+          flat
+          icon="logout"
+          size="md"
+          style="color: white"
+          label="Logout"
+        />
       </q-toolbar>
     </q-header>
 
@@ -49,17 +57,7 @@
                 >
               </q-item-section>
             </q-item>
-             <q-item clickable v-ripple @click="toggleSection('GoodItems')">
-              <q-item-section class="q-ml-sm">
-                <q-item-label>
-                  <q-icon
-                    name="computer"
-                    class="q-ml-md q-mr-md"
-                  />Upload Items
-                  </q-item-label
-                >
-              </q-item-section>
-            </q-item>
+
             <!-- <q-item clickable v-ripple @click="toggleSection('project')">
               <q-item-section class="q-ml-sm">
                 <q-item-label>
@@ -78,7 +76,24 @@
                 >
               </q-item-section>
             </q-item> -->
-      </q-expansion-item>
+          </q-expansion-item>
+          <q-expansion-item label="Upload Items" expand-separator icon="cloud">
+            <q-item clickable v-ripple @click="toggleSection('GoodItems')">
+              <q-item-section class="q-ml-sm">
+                <q-item-label>
+                  <q-icon name="file_upload" class="q-ml-md q-mr-md" />Bulk
+                  Upload Materials
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple @click="toggleSection('ItemEntry')">
+              <q-item-section class="q-ml-sm">
+                <q-item-label>
+                  <q-icon name="add" class="q-ml-md q-mr-md" />New Material
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-expansion-item>
         </q-list>
       </q-scroll-area>
       <q-img
@@ -103,15 +118,13 @@
     <q-page-container v-if="showProjects">
       <Projects />
     </q-page-container>
-     <q-page-container v-if="showGoodItems">
+    <q-page-container v-if="showGoodItems">
       <GoodItems />
     </q-page-container>
-    <!--<q-page-container v-if="showProject">
-      <ProjectTable />
+    <q-page-container v-if="showGoodItemsEntry">
+      <EntryItems />
     </q-page-container>
-    <q-page-container v-if="showUser">
-      <UserTable />
-    </q-page-container> -->
+
   </q-layout>
 </template>
 
@@ -121,9 +134,7 @@ import { defineComponent, ref } from "vue";
 import Maintenance from "components/MaintenanceTable.vue";
 import Projects from "components/ProjectsTable.vue";
 import GoodItems from "components/UploadItem.vue";
-
-
-
+import EntryItems from "components/ItemEntry.vue";
 
 export default defineComponent({
   components: {
@@ -131,6 +142,7 @@ export default defineComponent({
     Maintenance,
     Projects,
     GoodItems,
+    EntryItems,
 
   },
 
@@ -138,7 +150,7 @@ export default defineComponent({
     const leftDrawerOpen = ref(false);
 
     return {
-    //  essentialLinks: linksList,
+      //  essentialLinks: linksList,
       leftDrawerOpen,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
@@ -151,6 +163,7 @@ export default defineComponent({
       showMaintenance: false,
       showProjects: false,
       showGoodItems: false,
+      showGoodItemsEntry: false,
     };
   },
   methods: {
@@ -165,6 +178,7 @@ export default defineComponent({
       this.showMaintenance = section === "ElMaintenance";
       this.showProjects = section === "Project";
       this.showGoodItems = section === "GoodItems";
+      this.showGoodItemsEntry=section==="ItemEntry";
       // this.showMachine = section === "machine";
 
       // this.showUser = section === "user";
