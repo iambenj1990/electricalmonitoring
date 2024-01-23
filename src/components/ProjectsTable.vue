@@ -29,13 +29,19 @@
         ]"
         :filter="filter"
       >
-      <template v-slot:top-right>
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-      </template>
+        <template v-slot:top-right>
+          <q-input
+            borderless
+            dense
+            debounce="300"
+            v-model="filter"
+            placeholder="Search"
+          >
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+        </template>
 
         <template #body="props">
           <q-tr :props="props">
@@ -45,7 +51,7 @@
                 icon="shopping_cart"
                 color="green"
                 style="font-size: 1em"
-                @click="ViewProject(props.row._id,'View Materials')"
+                @click="ViewProject(props.row._id, 'View Materials')"
               />
             </q-td>
             <q-td key="ProjectName" style="font-size: 11px" align="center">
@@ -83,7 +89,7 @@
                 icon="edit"
                 color="primary"
                 style="font-size: 1em"
-                @click="ViewProject(props.row._id,'View Project')"
+                @click="ViewProject(props.row._id, 'View Project')"
               >
               </q-btn>
               <q-btn
@@ -389,154 +395,187 @@
   </div>
   <!-- WITHDRAW MATERIALS -->
 
-    <div>
-      <q-dialog v-model="ViewMaterials" persistent>
-        <q-card style="min-width: 1250px">
-          <q-card-section>
-            <div class="text-h6">
-              <q-icon name="shopping_cart" size="md" /> Materials List
-            </div>
-          </q-card-section>
-          <q-separator></q-separator>
-          <q-card-section class="q-pa-sm">
-            <div class="q-pa-sm">
-              <div class="q-gutter-md row">
-                <div class="col">
-                  <q-input
-                    type="text"
-                    label="Project Name"
-                    v-model="ProjectData.ProjectName"
-                    readonly
-                  />
-                </div>
-                <div class="col">
-                  <q-input
-                    type="text"
-                    label="Reference No."
-                    v-model="ProjectData.ReferenceNo"
-                    readonly
-                  />
-                </div>
-
-                <div class="col">
-                  <q-input
-                    type="text"
-                    label="Total Project Cost"
-                    v-model="ProjectData.TotalProjectCost"
-                    readonly
-                  />
-                </div>
-                <div class="col">
-                  <q-input
-                    type="text"
-                    label="Material Balance"
-                    v-model="ProjectData.MaterialBalance"
-                    readonly
-                  />
-                </div>
+  <div>
+    <q-dialog v-model="ViewMaterials" persistent>
+      <q-card style="min-width: 1250px">
+        <q-card-section>
+          <div class="text-h6">
+            <q-icon name="shopping_cart" size="md" /> Materials List
+          </div>
+        </q-card-section>
+        <q-separator></q-separator>
+        <q-card-section class="q-pa-sm">
+          <div class="q-pa-sm">
+            <div class="q-gutter-md row">
+              <div class="col">
+                <q-input
+                  type="text"
+                  label="Project Name"
+                  v-model="ProjectData.ProjectName"
+                  readonly
+                />
+              </div>
+              <div class="col">
+                <q-input
+                  type="text"
+                  label="Reference No."
+                  v-model="ProjectData.ReferenceNo"
+                  readonly
+                />
               </div>
 
+              <div class="col">
+                <q-input
+                  type="text"
+                  label="Total Project Cost"
+                  v-model="ProjectData.TotalProjectCost"
+                  readonly
+                />
+              </div>
+              <div class="col">
+                <q-input
+                  type="text"
+                  label="Material Balance"
+                  v-model="ProjectData.MaterialBalance"
+                  readonly
+                />
+              </div>
             </div>
-          </q-card-section>
+          </div>
+        </q-card-section>
 
-          <q-card-section>
-            <div class="q-pa-xs">
+        <q-card-section>
+          <div class="q-pa-xs">
+            <q-btn
+              flat
+              rounded
+              label="Withdraw"
+              class="btnColor"
+              icon="add"
+              @click="ViewAvailMaterials = true"
+            />
+            <div class="q-gutter-md col">
+              <div class="q-pa-sm">
+                <q-table
+                  :rows="rows"
+                  :columns="Materialscolumns"
+                  row-key="name"
+                  :visible-columns="[
+                    'MaterialName',
+                    'MaterialDescriptions',
+                    'MaterialQuantity',
+                    'MaterialUnit',
+                    'MaterialPrice',
+                    'Actions',
+                  ]"
+                />
+              </div>
+            </div>
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn color="red" label="Cancel" v-close-popup />
+          <q-btn color="primary" label="Save" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+  </div>
+
+  <div>
+    <q-dialog v-model="ViewAvailMaterials" persistent>
+      <q-card style="min-width: 50%; min-height: 50%">
+        <q-card-section>
+          <div class="text-h6">
+            <q-icon name="shopping_cart" size="md" /> List of Available
+            Materials
+          </div>
+        </q-card-section>
+        <q-separator></q-separator>
+        <q-card-section class="q-pa-sm"> </q-card-section>
+
+        <q-card-section>
+          <div class="q-pa-xs">
+            <div class="q-gutter-md col">
+              <div class="q-pa-sm">
+                <q-table
+                  :rows="storeMaterials.Materials"
+                  :columns="MaterialAvailableColumns"
+                  row-key="_id"
+                  :visible-columns="['MaterialName', 'MaterialCost', 'MaterialUnit', 'Actions']"
+                  :filter="filterMaterials"
+                >
+                <template v-slot:top-right>
+          <q-input
+            borderless
+            dense
+            debounce="300"
+            v-model="filterMaterials"
+            placeholder="Search"
+          >
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+        </template>
+
+        <template #body="props">
+          <q-tr :props="props">
+            <q-td key="MaterialName" style="font-size: 11px" align="center">
+              {{ props.row.MaterialName }}
+            </q-td>
+            <q-td key="MaterialCost" style="font-size: 11px" align="center">
+              {{ props.row.MaterialCost }}
+            </q-td>
+            <q-td key="MaterialUnit" style="font-size: 11px" align="center">
+              {{props.row.MaterialUnit}}
+            </q-td>
+
+            <q-td key="Actions" align="center">
               <q-btn
                 flat
-                rounded
-                label="Withdraw"
-                class="btnColor"
                 icon="add"
-                @click="ViewAvailMaterials=true"
+                color="primary"
+                style="font-size: 1em"
+
               />
-              <div class="q-gutter-md col">
-                <div class="q-pa-sm">
-                  <q-table
-                    :rows="rows"
-                    :columns="Materialscolumns"
-                    row-key="name"
-                    :visible-columns="[
-                      'MaterialName',
-                      'MaterialDescriptions',
-                      'MaterialQuantity',
-                      'MaterialUnit',
-                      'MaterialPrice',
-                      'Actions',
-                    ]"
-                  />
-                </div>
+
+            </q-td>
+          </q-tr>
+        </template>
+
+              </q-table>
               </div>
             </div>
-          </q-card-section>
+          </div>
+        </q-card-section>
 
-          <q-card-actions align="right">
-            <q-btn color="red" label="Cancel" v-close-popup />
-            <q-btn color="primary" label="Save" v-close-popup />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-    </div>
-
-
-    <div>
-      <q-dialog v-model="ViewAvailMaterials" persistent  >
-        <q-card style="min-width: 50%; min-height: 50%;">
-          <q-card-section>
-            <div class="text-h6">
-              <q-icon name="shopping_cart" size="md" /> List of Available Materials
-            </div>
-          </q-card-section>
-          <q-separator></q-separator>
-          <q-card-section class="q-pa-sm">
-
-          </q-card-section>
-
-          <q-card-section>
-            <div class="q-pa-xs">
-              <div class="q-gutter-md col">
-                <div class="q-pa-sm">
-                  <q-table
-                    :rows="rows"
-                    :columns="MaterialAvailableColumns"
-                    row-key="name"
-                    :visible-columns="[
-                      'MaterialName',
-                      'Cost',
-                      'Unit',
-                      'Actions',
-                    ]"
-                  />
-                </div>
-              </div>
-            </div>
-          </q-card-section>
-
-          <q-card-section align="right">
-            <!-- <q-btn color="red" label="Cancel" v-close-popup /> -->
-            <q-btn color="red" label="Close" v-close-popup />
-          </q-card-section>
-        </q-card>
-      </q-dialog>
-    </div>
-
-
-
+        <q-card-section align="right">
+          <!-- <q-btn color="red" label="Cancel" v-close-popup /> -->
+          <q-btn color="red" label="Close" v-close-popup />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+  </div>
 </template>
 
 <script>
 import { ref } from "vue";
 import { useProjectInfoStore } from "stores/projectStore.js";
 import { usePhAddress } from "stores/TagumAddressStore.js";
+import { useMaterialStore } from "stores/Materials.js";
 
 export default {
   data() {
     return {
-      filter:ref(''),
+      filter: ref(""),
+      filterMaterials:ref(""),
       uploadedFileName: "",
       newData: ref(false),
       viewData: ref(false),
       ViewMaterials: ref(false),
-      ViewAvailMaterials:ref(false),
+      ViewAvailMaterials: ref(false),
+
       //fetchAccDate:ref(new Date(Date.now)),
       //fetchStartDate: ref(new Date(Date.now)),
       City: ref("Tagum City"),
@@ -560,43 +599,53 @@ export default {
         TargetAccomplishment: "",
         DateStarted: "",
         AccomplishmentPctg: "",
-        MaterialsWithdrawn: [{
-          MaterialName: "",
-          Description: "",
-          Quantity: "",
-          Unit: "",
-          Price:"",
-        }],
+        MaterialsWithdrawn: [
+          {
+            MaterialName: "",
+            Description: "",
+            Quantity: "",
+            Unit: "",
+            Price: "",
+          },
+        ],
         ProjectIncharge: "",
         Status: "",
         Remarks: "",
         IsDeleted: false,
       },
       StatusSelections: ["Recieved", "On-going", "Finished"],
-      MaterialAvailableColumns:[
+      MaterialAvailableColumns: [
+        {
+          name: "_id",
+          label: "id",
+          field: "_id",
+          sortable: true,
+          align: "center",
+          headerClasses: "bg-grey-7 text-white",
+          headerStyle: "font-size: 1.2 em",
+        },
         {
           name: "MaterialName",
           label: "Material Name",
-          //field: "_id",
+          field: "MaterialName",
           sortable: true,
           align: "center",
           headerClasses: "bg-grey-7 text-white",
           headerStyle: "font-size: 1.2 em",
         },
         {
-          name: "Cost",
+          name: "MaterialCost",
           label: "Cost",
-          //field: "_id",
+          field: "MaterialCost",
           sortable: true,
           align: "center",
           headerClasses: "bg-grey-7 text-white",
           headerStyle: "font-size: 1.2 em",
         },
         {
-          name: "Unit",
+          name: "MaterialUnit",
           label: "Unit",
-          //field: "_id",
-          sortable: true,
+          field: "MaterialUnit",
           align: "center",
           headerClasses: "bg-grey-7 text-white",
           headerStyle: "font-size: 1.2 em",
@@ -604,14 +653,11 @@ export default {
         {
           name: "Actions",
           label: "Actions",
-          //field: "_id",
-          sortable: true,
           align: "center",
           headerClasses: "bg-grey-7 text-white",
           headerStyle: "font-size: 1.2 em",
         },
-
-    ],
+      ],
 
       Materialscolumns: [
         {
@@ -768,14 +814,16 @@ export default {
 
   setup() {
     const StoreElectricalProject = useProjectInfoStore();
+    const storeMaterials = useMaterialStore();
     const Brgystore = usePhAddress();
-
+    storeMaterials.getMaterials();
     StoreElectricalProject.getProjects();
     console.log("Project Data list ==> ", StoreElectricalProject.Projects);
 
     return {
       StoreElectricalProject,
       Brgystore,
+      storeMaterials,
     };
   },
 
@@ -908,11 +956,10 @@ export default {
       });
     },
 
-    async ViewProject(id,btnclick) {
+    async ViewProject(id, btnclick) {
       this.clearEmptyValues(this.ProjectData);
       const storeProject = useProjectInfoStore();
       await storeProject.getProject(id).then(() => {
-
         this.ProjectData = storeProject.Project;
         this.ProjectData.TargetAccomplishment = this.formatDate(
           new Date(this.ProjectData.TargetAccomplishment)
@@ -935,23 +982,19 @@ export default {
         );
         //console.log("fetched data ==>", this.ProjectData);
 
-
-
         switch (btnclick) {
-        case "View Project":
-          this.viewData = true;
-          break;
+          case "View Project":
+            this.viewData = true;
+            break;
 
-        case "View Materials":
-          this.ViewMaterials =true;
-          break;
+          case "View Materials":
+            this.ViewMaterials = true;
+            break;
 
-        case "View Available Materials":
-          this.ViewAvailMaterials =true;
-          break;
-
-      }
-
+          case "View Available Materials":
+            this.ViewAvailMaterials = true;
+            break;
+        }
       });
     },
   },

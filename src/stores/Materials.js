@@ -11,8 +11,8 @@ export const useMaterialStore = defineStore('MaterialStore', {
     async getMaterials(){
       try {
         const result = await axios.get('http://10.0.1.23:5000/api/materials/');
-        this.Materials = result.data;
-       console.log("JobOrders=",this.Materials)
+        this.Materials = result.data
+       //console.log("Materials =>", result.data)
 
       } catch (error) {
         console.log(`Error fetching Request list : ${error}`)
@@ -23,7 +23,7 @@ export const useMaterialStore = defineStore('MaterialStore', {
       try {
         const result = await axios.get(`http://10.0.1.23:5000/api/materials/${val}`);
         this.Material = result.data;
-        console.log("data=>",result.data);
+        console.log("Materials =>",result.data);
       } catch (error) {
         console.log(`Error fetching Request : ${error}`)
       }
@@ -31,8 +31,9 @@ export const useMaterialStore = defineStore('MaterialStore', {
 
     async newMaterial(payload){
       try {
-          const result = await axios.post('http://10.0.1.23:5000/api/materials/', payload);
-          this.Material.push(result.data);
+          const result = await axios.post('http://10.0.1.23:5000/api/materials', payload);
+          console.log(result.statusText);
+         // this.Material.push(result.data);
       } catch (error) {
         console.log(`Error! unable to save Request : ${error}`);
       }

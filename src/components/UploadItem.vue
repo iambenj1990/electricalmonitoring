@@ -2,15 +2,14 @@
   <div >
     <q-card class="q-pa-sm">
         <q-card-section  class="q-pa-sm" align="right">
-
           <input type="file" ref="fileInput" @change="handleFileChange"  />
         </q-card-section>
         <q-separator></q-separator>
         <q-card-section class="q-pa-sm">
           <q-table :rows="tableData" :columns="columns"  />
         </q-card-section>
-
         <q-card-actions class="q-pa-sm" align="right">
+          <q-btn  label="Cancel" style="color:white; background-color: red ;"  v-close-popup/>
           <q-btn @click="saveToMongoDB" label="Save" style="color:white; background-color: green ;" />
         </q-card-actions>
     </q-card >

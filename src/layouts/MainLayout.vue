@@ -78,14 +78,14 @@
             </q-item> -->
           </q-expansion-item>
           <q-expansion-item label="Upload Items" expand-separator icon="cloud">
-            <q-item clickable v-ripple @click="toggleSection('GoodItems')">
+            <!-- <q-item clickable v-ripple @click="toggleSection('GoodItems')">
               <q-item-section class="q-ml-sm">
                 <q-item-label>
                   <q-icon name="file_upload" class="q-ml-md q-mr-md" />Bulk
                   Upload Materials
                 </q-item-label>
               </q-item-section>
-            </q-item>
+            </q-item> -->
             <q-item clickable v-ripple @click="toggleSection('ItemEntry')">
               <q-item-section class="q-ml-sm">
                 <q-item-label>
@@ -118,9 +118,9 @@
     <q-page-container v-if="showProjects">
       <Projects />
     </q-page-container>
-    <q-page-container v-if="showGoodItems">
+    <!-- <q-page-container v-if="showGoodItems">
       <GoodItems />
-    </q-page-container>
+    </q-page-container> -->
     <q-page-container v-if="showGoodItemsEntry">
       <EntryItems />
     </q-page-container>
@@ -133,7 +133,7 @@ import { defineComponent, ref } from "vue";
 // import EssentialLink from "components/EssentialLink.vue";
 import Maintenance from "components/MaintenanceTable.vue";
 import Projects from "components/ProjectsTable.vue";
-import GoodItems from "components/UploadItem.vue";
+//import GoodItems from "components/UploadItem.vue";
 import EntryItems from "components/ItemEntry.vue";
 
 export default defineComponent({
@@ -141,7 +141,7 @@ export default defineComponent({
     // EssentialLink,
     Maintenance,
     Projects,
-    GoodItems,
+   // GoodItems,
     EntryItems,
 
   },
@@ -162,7 +162,7 @@ export default defineComponent({
       submenuOpen: false,
       showMaintenance: false,
       showProjects: false,
-      showGoodItems: false,
+      //showGoodItems: false,
       showGoodItemsEntry: false,
     };
   },
@@ -177,7 +177,7 @@ export default defineComponent({
     toggleSection(section) {
       this.showMaintenance = section === "ElMaintenance";
       this.showProjects = section === "Project";
-      this.showGoodItems = section === "GoodItems";
+      //this.showGoodItems = section === "GoodItems";
       this.showGoodItemsEntry=section==="ItemEntry";
       // this.showMachine = section === "machine";
 

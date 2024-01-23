@@ -1,30 +1,36 @@
 <template>
-  <div class="q-pa-sm">
-    <q-btn
-      flat
-      rounded
-      color="primary"
-      label="Add Project"
-      icon="add"
-      @click="newMaterial = true"
-    />
+  <div class="q-pt-xl row">
+    <div class="q-pa-sm col">
+      <q-btn
+        flat
+        rounded
+        color="primary"
+        label="Add Materials"
+        icon="add"
+        @click="newMaterial = true"
+      />
+    </div>
+    <div class="q-pa-sm col" align="right">
+      <q-btn
+        flat
+        rounded
+        color="primary"
+        label="Upload Excel"
+        @click="bulkNewMaterial = true"
+      />
+    </div>
   </div>
 
-  <div>
-    <!-- <q-table
-      title="Electrical Projects List"
-      :rows="StoreElectricalProject.Projects"
-      :columns="columns"
+  <div class="q-pa-md">
+    <q-table
+      title="Materials List"
+      :rows="storeMaterials.Materials"
+      :columns="Materialcolumns"
       row-key="_id"
       :visible-columns="[
-        'Withdrawals',
-        'ProjectName',
-        'ReferenceNo',
-        'TotalProjectCost',
-        'ProjectIncharge',
-        'TargetAccomplishment',
-        'Location',
-        'Status',
+        'MaterialName',
+        'MaterialCost',
+        'MaterialUnit',
         'Actions',
       ]"
       :filter="filter"
@@ -45,62 +51,31 @@
 
       <template #body="props">
         <q-tr :props="props">
-          <q-td key="Withdrawals" style="font-size: 11px" align="center">
-            <q-btn
-              flat
-              icon="shopping_cart"
-              color="green"
-              style="font-size: 1em"
-              @click="ViewProject(props.row._id, 'View Materials')"
-            />
+          <q-td key="MaterialName" style="font-size: 11px" align="center">
+            {{ props.row.MaterialName }}
           </q-td>
-          <q-td key="ProjectName" style="font-size: 11px" align="center">
-            {{ props.row.ProjectName }}
+          <q-td key="MaterialCost" style="font-size: 11px" align="center">
+            {{ props.row.MaterialCost }}
           </q-td>
-          <q-td key="ReferenceNo" style="font-size: 11px" align="center">
-            {{ props.row.ReferenceNo }}
+          <q-td key="MaterialUnit" style="font-size: 11px" align="center">
+            {{ props.row.MaterialUnit }}
           </q-td>
-          <q-td key="TotalProjectCost" style="font-size: 11px" align="center">
-            {{ formatMoney(props.row.TotalProjectCost) }}
-          </q-td>
-          <q-td key="ProjectIncharge" style="font-size: 11px" align="center">
-            {{ props.row.ProjectIncharge }}
-          </q-td>
-          <q-td
-            key="TargetAccomplishment"
-            style="font-size: 11px"
-            align="center"
-          >
-            {{ formatDate(props.row.TargetAccomplishment) }}
-          </q-td>
-          <q-td key="Barangay" style="font-size: 11px" align="center">
-            {{ props.row.Location.Barangay }}
-          </q-td>
-
-          <q-td key="Status" style="font-size: 11px" align="center">
-            <q-chip :class="colorMyStatus(props.row.Status)">
-              {{ props.row.Status }}
-            </q-chip>
-          </q-td>
-
           <q-td key="Actions" align="center">
             <q-btn
               flat
-              icon="edit"
-              color="primary"
+              icon="delete"
+              color="negative"
               style="font-size: 1em"
-              @click="ViewProject(props.row._id, 'View Project')"
-            >
-            </q-btn>
-            <q-btn flat icon="delete" color="negative" style="font-size: 1em" />
+              @click="DeleteEntryData(props.row._id)"
+            />
           </q-td>
         </q-tr>
       </template>
-    </q-table> -->
+    </q-table>
   </div>
 
   <q-dialog v-model="newMaterial" persistent>
-    <q-card style="min-width: 800px">
+    <q-card style="min-width: 900px">
       <q-card-section>
         <div class="text-h6">Material Information</div>
       </q-card-section>
@@ -108,35 +83,184 @@
       <q-card-section>
         <div class="q-gutter-md row">
           <div class="col">
-            <q-input type="text" label="Material Name" />
+            <q-input
+              type="text"
+              label="Material Name"
+              v-model="Material.MaterialName"
+            />
           </div>
           <div class="col">
-            <q-input type="text" label="Amount Cost" prefix="₱" />
+            <q-input
+              type="text"
+              label="Amount Cost"
+              prefix="₱"
+              v-model="Material.MaterialCost"
+            />
           </div>
           <div class="col">
-            <q-input type="text" label="Unit" />
+            <q-input type="text" label="Unit" v-model="Material.MaterialUnit" />
           </div>
         </div>
       </q-card-section>
       <q-card-actions align="right">
         <q-btn color="red" label="Cancel" v-close-popup />
-        <q-btn color="primary" label="Save" v-close-popup />
+        <q-btn
+          color="primary"
+          label="Save"
+          v-close-popup
+          @click="EntryNewMaterial(Material)"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="bulkNewMaterial" persistent>
+    <q-card style="min-width: 800px">
+      <q-card-section>
+        <div class="text-h6">Upload Bulk Material Information</div>
+      </q-card-section>
+      <bulkUpload></bulkUpload>
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="successResult" persistent>
+    <q-card style="min-width: 800px">
+      <q-card-section>
+        <div class="text-h6">{{ this.successResultMessage.Header }}</div>
+      </q-card-section>
+      <q-card-section>
+        {{ this.successResultMessage.Message }}
+      </q-card-section>
+      <q-card-actions align="right">
+        <q-btn
+          color="red"
+          label="OK"
+          @click="successResult = false"
+          v-close-popup
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
 <script>
+import { ref } from "vue";
+import { useMaterialStore } from "stores/Materials.js";
+import bulkUpload from "components/UploadItem.vue";
 export default {
-  setup() {},
-  data() {
+  components: {
+    bulkUpload,
+  },
+
+  setup() {
+    const storeMaterials = useMaterialStore();
+    storeMaterials.getMaterials().then(() => {
+      setInterval(2000);
+      console.log("Materials List =>", storeMaterials.Materials);
+    });
+
     return {
-      Materials: [],
-      Material: [],
-      newMaterial: false,
+      storeMaterials,
     };
   },
 
-  methods: {},
+  data() {
+    return {
+      filter: ref(""),
+      Materials: [],
+      Material: {},
+      newMaterial: false,
+      bulkNewMaterial: false,
+      successResult: false,
+      successResultMessage: {
+        Header: "",
+        Message: "",
+      },
+      Materialcolumns: [
+        {
+          name: "_id",
+          label: "ID",
+          field: "_id",
+          //sortable: true,
+          align: "center",
+          headerClasses: "bg-grey-7 text-white",
+          headerStyle: "font-size: 1.2 em",
+        },
+        {
+          name: "MaterialName",
+          label: "Name",
+          field: "MaterialName",
+          sortable: true,
+          align: "center",
+          headerClasses: "bg-grey-7 text-white",
+          headerStyle: "font-size: 1.2 em",
+        },
+        {
+          name: "MaterialCost",
+          label: "Cost",
+          field: "MaterialCost",
+          // sortable: true,
+          align: "center",
+          headerClasses: "bg-grey-7 text-white",
+          headerStyle: "font-size: 1.2 em",
+        },
+        {
+          name: "MaterialUnit",
+          label: "Unit",
+          field: "MaterialUnit",
+          // sortable: true,
+          align: "center",
+          headerClasses: "bg-grey-7 text-white",
+          headerStyle: "font-size: 1.2 em",
+        },
+        {
+          name: "Actions",
+          label: "Actions",
+          //field: "MaterialUnit",
+          // sortable: true,
+          align: "center",
+          headerClasses: "bg-grey-7 text-white",
+          headerStyle: "font-size: 1.2 em",
+        },
+      ],
+    };
+  },
+
+  methods: {
+    async EntryNewMaterial(payload) {
+      console.log(payload);
+      try {
+        await this.storeMaterials.newMaterial(payload).then(() => {
+          this.storeMaterials.getMaterials();
+
+          this.successResultMessage.Header = "Successfuly Saved.";
+          this.successResultMessage.Message =
+            "Entered Material successfuly saved to database ";
+          this.successResult = true;
+        });
+      } catch (error) {
+        this.successResultMessage.Header = error.Header;
+        this.successResultMessage.Message = error.Message;
+        this.successResult = true;
+      }
+    },
+
+    async DeleteEntryData(id) {
+      console.log("Selected ID=> ", id);
+      try {
+        await this.storeMaterials.removeMaterial(id).then(() => {
+          this.storeMaterials.getMaterials();
+          this.successResultMessage.Header = "Successfuly Deleted.";
+          this.successResultMessage.Message =
+            "Entered Material successfuly Deleted from database ";
+          this.successResult = true;
+        });
+      } catch (error) {
+        this.successResultMessage.Header = error.Header;
+        this.successResultMessage.Message = error.Message;
+        this.successResult = true;
+      }
+    },
+  },
 };
 </script>
 <style></style>
