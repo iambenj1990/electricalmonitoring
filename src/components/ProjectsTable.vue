@@ -370,16 +370,16 @@
             </div> -->
           </div>
 
-          <q-card-actions>
-            <div class="col">
+          <q-card-actions align ="right">
+            <!-- <div class="col">
               <q-btn
                 icon="shopping_cart_checkout"
                 color="green"
                 label="Withdraw Materials"
                 @click="newData_click()"
               />
-            </div>
-            <div class="col-mx q-gutter-md">
+            </div> -->
+            <div class="col-mx q-gutter-md" >
               <q-btn color="red" label="Cancel" v-close-popup />
               <q-btn
                 color="primary"
@@ -484,7 +484,7 @@
 
   <div>
     <q-dialog v-model="ViewAvailMaterials" persistent>
-      <q-card style="min-width: 50%; min-height: 50%">
+      <q-card style="min-width: 80%; min-height: 50%">
         <q-card-section>
           <div class="text-h6">
             <q-icon name="shopping_cart" size="md" /> List of Available
@@ -502,25 +502,28 @@
                   :rows="storeMaterials.Materials"
                   :columns="MaterialAvailableColumns"
                   row-key="_id"
-                  :visible-columns="['MaterialName', 'MaterialCost', 'MaterialUnit', 'Actions']"
                   :filter="filterMaterials"
-                >
-                <template v-slot:top-right>
-          <q-input
-            borderless
-            dense
-            debounce="300"
-            v-model="filterMaterials"
-            placeholder="Search"
-          >
-            <template v-slot:append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
-        </template>
+                  selection="multiple"
+                  v-model:selected="selected"
 
-        <template #body="props">
+                  >
+                    <template v-slot:top-right>
+                          <q-input
+                            borderless
+                            dense
+                            debounce="300"
+                            v-model="filterMaterials"
+                            placeholder="Search"
+                          >
+                            <template v-slot:append>
+                              <q-icon name="search" />
+                            </template>
+                          </q-input>
+                    </template>
+
+        <!-- <template #body="props">
           <q-tr :props="props">
+
             <q-td key="MaterialName" style="font-size: 11px" align="center">
               {{ props.row.MaterialName }}
             </q-td>
@@ -542,7 +545,7 @@
 
             </q-td>
           </q-tr>
-        </template>
+        </template> -->
 
               </q-table>
               </div>
@@ -568,6 +571,7 @@ import { useMaterialStore } from "stores/Materials.js";
 export default {
   data() {
     return {
+
       filter: ref(""),
       filterMaterials:ref(""),
       uploadedFileName: "",
@@ -615,15 +619,15 @@ export default {
       },
       StatusSelections: ["Recieved", "On-going", "Finished"],
       MaterialAvailableColumns: [
-        {
-          name: "_id",
-          label: "id",
-          field: "_id",
-          sortable: true,
-          align: "center",
-          headerClasses: "bg-grey-7 text-white",
-          headerStyle: "font-size: 1.2 em",
-        },
+        // {
+        //   name: "_id",
+        //   label: "id",
+        //   field: "_id",
+        //   sortable: true,
+        //   align: "center",
+        //   headerClasses: "bg-grey-7 text-white",
+        //   headerStyle: "font-size: 1.2 em",
+        // },
         {
           name: "MaterialName",
           label: "Material Name",
@@ -650,13 +654,7 @@ export default {
           headerClasses: "bg-grey-7 text-white",
           headerStyle: "font-size: 1.2 em",
         },
-        {
-          name: "Actions",
-          label: "Actions",
-          align: "center",
-          headerClasses: "bg-grey-7 text-white",
-          headerStyle: "font-size: 1.2 em",
-        },
+   
       ],
 
       Materialscolumns: [
@@ -819,11 +817,14 @@ export default {
     storeMaterials.getMaterials();
     StoreElectricalProject.getProjects();
     console.log("Project Data list ==> ", StoreElectricalProject.Projects);
+    const selected = ref([]);
 
     return {
       StoreElectricalProject,
       Brgystore,
       storeMaterials,
+      selected,
+
     };
   },
 
