@@ -484,7 +484,7 @@
 
   <div>
     <q-dialog v-model="ViewAvailMaterials" persistent>
-      <q-card style="min-width: 80%; min-height: 50%">
+      <q-card style="min-width: 50%; min-height: 50%">
         <q-card-section>
           <div class="text-h6">
             <q-icon name="shopping_cart" size="md" /> List of Available
@@ -654,7 +654,7 @@ export default {
           headerClasses: "bg-grey-7 text-white",
           headerStyle: "font-size: 1.2 em",
         },
-   
+
       ],
 
       Materialscolumns: [
