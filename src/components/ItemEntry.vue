@@ -20,10 +20,38 @@
       />
     </div>
   </div>
+  <q-separator></q-separator>
+
+  <div class="q-pa-md row" style="align-items: baseline">
+    <div class="col-3">
+      <q-select
+        :options="MaterialCategory"
+        v-model="Material_Category"
+        label="Select Category"
+        style="width: 290px"
+      />
+    </div>
+
+    <div class="col-9">
+      <div align="right">
+        <q-input
+          borderless
+          dense
+          debounce="300"
+          v-model="filter"
+          placeholder="Search"
+          style="width: 290px"
+        >
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+      </div>
+    </div>
+  </div>
 
   <div class="q-pa-md">
     <q-table
-      title="Materials List"
       :rows="storeMaterials.Materials"
       :columns="Materialcolumns"
       row-key="_id"
@@ -35,20 +63,6 @@
       ]"
       :filter="filter"
     >
-      <template v-slot:top-right>
-        <q-input
-          borderless
-          dense
-          debounce="300"
-          v-model="filter"
-          placeholder="Search"
-        >
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-      </template>
-
       <template #body="props">
         <q-tr :props="props">
           <q-td key="MaterialName" style="font-size: 11px" align="center">
@@ -99,6 +113,16 @@
           </div>
           <div class="col">
             <q-input type="text" label="Unit" v-model="Material.MaterialUnit" />
+          </div>
+        </div>
+        <div class="q-gutter-md row">
+          <div class="col">
+            <q-select
+              :options="MaterialCategory"
+              v-model="Material.MaterialCategory"
+              label="Select Category"
+              style="width: 290px"
+            />
           </div>
         </div>
       </q-card-section>
@@ -170,6 +194,14 @@ export default {
       Material: {},
       newMaterial: false,
       bulkNewMaterial: false,
+      MaterialCategory: [
+        "Cables/Wires",
+        "Automatics/Controllers",
+        "Lighting",
+        "Renewable Energy",
+        "Tools",
+      ],
+      Material_Category: "",
       successResult: false,
       successResultMessage: {
         Header: "",
